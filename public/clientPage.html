@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Comment Box</title>
+    <LINK REL=StyleSheet HREF="./CSS/mystyle.css" TYPE="text/css" MEDIA=screen>
+  </head>
+
+  <body>
+    <div class="msg" style="position:absolute; left:585px; top:29px; width:780px;height:695px;">
+      <h1>Comments:</h1><hr/>
+        {COMMENT}
+    </div>
+    <div class="photo" style="height:200px; width:150px; float:left;">
+      <p>
+        <img src="./images/banner.png" width="403" height="57"/>
+      </p>
+      <p>
+        <img border="0" src="./images/step.jpg" alt="ThoughtWorks" width="436" height="316">
+      </p>
+      <br/>
+      <form action='clientPage.html' method='get'>
+        <b>Name:</b>
+        <input type="text" name="name"/><br>
+        <b>Comment:</b>
+        <textarea name="comment" id="comments" ></textarea><br>
+        <center>
+        <input type="submit" value="Post it" />
+        </center>
+      </form>
+    </div>
+  </body>
+</html>

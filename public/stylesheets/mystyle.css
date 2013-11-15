@@ -1,0 +1,18 @@
+body {
+      font-family:verdana,arial,sans-serif;
+      font-size:10pt;
+      margin:10px;
+      background-image:url('../images/bg.jpg');
+    }
+textarea {
+          font-size: 10pt;
+          font-family:Comic Sans MS
+         }
+input {
+          font-family:Comic Sans MS
+         } 
+
+div {
+  font-size: 12pt;
+  font-family:Comic Sans MS
+} 
