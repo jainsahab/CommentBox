@@ -1,0 +1,36 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Sign Up</title>
+	<link rel="stylesheet" href="./stylesheets/style.css" />
+	<h1>
+		<center>
+			<img src="./images/banner2.png" width=450px height=50px/>
+		</center>
+		<hr/>
+</head>
+<body>
+	<h3><center>Sign Up to continue</center></h3>
+
+	<div class="container">
+		<h1>
+			<img src="./images/logo.png" width=100px height=70px/>
+		</h1>
+		<form id="form" name="form" method="post" action='/ToRegisterUser'>
+			<div>
+				<label>Name:</label>
+				<input type="text" name="name" id="name" placeholder="name"/>
+				<label>Email ID:</label>
+				<input type="text" name="email" id="email" placeholder="Email-ID"/>
+				<label>Password:</label>
+				<input type="password" name="password" id="password" placeholder="Password"/>
+				<label>Re-Enter Password:</label>
+				<input type="password" name="cpassword" id="cpassword" placeholder="Re-Enter Password"/>
+				 <br/>
+				 <br/>
+				<button type="submit" id="login">Sign Up</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

@@ -5,30 +5,34 @@
 	<link rel="stylesheet" href="./stylesheets/style.css" />
 	<h1>
 		<center>
-			<img src="./images/banner2.png" width=450px height=50px/>
+			<img src="/images/banner2.png" width=450px height=50px/>
 		</center>
 		<hr/>
 </head>
 <body>
-	
+	<h3><center>Sign in to continue</center></h3>
 	<div class="container">
+		
 		<h1>
-			<img src="./images/logo.png" width=100px height=70px/>
+			<img src="/images/logo.png" width=100px height=70px/>
 		</h1>
-		<form id="form" name="form" method="post" action='/validation'>
+		<form id="form" name="form" method="post" action='/authentication'>
 			<div>
-				<label for="username">Username:</label>
-				<input type="text" name="username" id="username" placeholder="Email"/>
+				<label for="username">E-mail:</label>
+				<input type="text" name="email" id="username" placeholder="Email"/>
 			</div>
 			<div>
 				<label for="password">Password:</label>
 				<input type="password" name="password" id="password" placeholder="Password"/>
-			</div>
+			</div><br/>
 			<div>				
 				<button type="submit" id="login">Login</button>
 			</div>
 			
 		</form>
+		<center>
+			<a href="signUp.html"> Sign Up</a>
+		</center>
 	</div>
 </body>
 </html>

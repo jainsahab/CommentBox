@@ -5,6 +5,7 @@ var handler=require('./public/javascript/CommentsRoute.js').handler;
 var outOfStock=function(request,response){
 	response.writeHead(404, {'Content-Type': 'text/html'});	
 	response.write("<h1>I don't have it, what you have requested.</h1>");	
+	response.end();
 }
 
 var serve=function(request,response){

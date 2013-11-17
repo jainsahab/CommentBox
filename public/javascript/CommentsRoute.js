@@ -5,15 +5,16 @@ var url=require('url');
 var commentsArray=fs.readFileSync('comments.txt','utf-8') && JSON.parse(fs.readFileSync('comments.txt',"utf-8")) || [];
 var htmlFileData=fs.readFileSync('./public/clientPage.html','utf-8');
 var login=fs.readFileSync('./public/Login.html','utf-8');
-var cssTemplate=fs.readFileSync('./public/stylesheets/mystyle.css');
-var cssHomeTemplate=fs.readFileSync('./public/stylesheets/style.css');
+var signUp=fs.readFileSync('./public/signUp.html','utf-8');
+var cssForSignUpandLogin=fs.readFileSync('./public/stylesheets/mystyle.css');
+var cssAfterLogin=fs.readFileSync('./public/stylesheets/style.css');
 var step=fs.readFileSync('./Photos/step.jpg');
 var banner=fs.readFileSync('./public/images/banner.png');
 var banner2=fs.readFileSync('./public/images/banner2.png');
 var logo=fs.readFileSync('./public/images/logo.png');
 var favicon=fs.readFileSync('./public/images/icon2.ico');
 var background=fs.readFileSync('./public/images/bg.jpg');
-var peopleInfo=JSON.parse(fs.readFileSync('PeopleInfo.txt','utf-8'));
+var peoplesInfo=fs.readFileSync('PeopleInfo.txt','utf-8') && JSON.parse(fs.readFileSync('PeopleInfo.txt','utf-8')) || [];
 
 var ContentType={html:'text/html',imgJpg:'image/jpeg',css:'image/css',icon:'image/x-icon',imgPng:'image/png'}
 var GetReadableCommentsFromObject=function(commentsArray){
@@ -43,20 +44,75 @@ handler['/']=function(request,response){
 	renderer(response,ContentType.html,login);
 }
 
-handler['/validation']=function(request,response){
+var credentialsMatch=function(email,password){
+	return peoplesInfo.some(function(obj){
+		return (obj.email == email && obj.password == password);
+	})
+}
+
+handler['/authentication']=function(request,response){
 	request.setEncoding('utf8');
 	request.on('data',function(postData){
-		var userName=postData.split('&')[0].split('=')[1];
-		var pswd = postData.split('&')[1].split('=')[1];
-		if(userName=='manish' && pswd=='prateek'){
+		var email=querystring.unescape(postData.split('&')[0].split('=')[1]);
+		var pswd = querystring.unescape(postData.split('&')[1].split('=')[1]);
+		if(credentialsMatch(email,pswd)){
 			var listComment=GetReadableCommentsFromObject(commentsArray);
 			renderer(response,ContentType.html,htmlFileData.replace(/{COMMENT}/,listComment.join('<br>')))
 		}
-		else{
-			console.log('Authentication Failed');
+		else
 			renderer(response,ContentType.html,'<h1>Authentication Failed</h1>');	
-		}
 	});
+}
+
+var GetUserDataObject=function(postData){
+	var obj={};
+	postData.split('&').forEach(function(entity){
+		var singleInfo=entity.split('=');
+		obj[singleInfo[0]]=singleInfo[1];
+	})
+	return obj;
+}
+
+var Validate=function(InfoObj,response){
+	if(!InfoObj.email.match('@')){
+		renderer(response,ContentType.html,'<h1>Invalid Mail</h1>');
+		return false;
+	}
+	if(InfoObj.password != InfoObj.cpassword){
+		renderer(response,ContentType.html,'<h1>Password doesn\'t match</h1>');
+		return false;	
+	}
+	return true;
+}
+
+var CheckForExistence=function(email,response){
+	var UserNotExist= peoplesInfo.every(function(obj){
+						return email != obj.email;
+       				  })
+	if(!UserNotExist)
+		renderer(response,ContentType.html,'<h1>User already Exist, Please Use another Email ID</h1>');
+	else
+		return true;
+}
+
+handler['/ToRegisterUser']=function(request,response){
+	request.setEncoding('utf-8');
+	request.on('data',function(postData){
+		var userInfo=GetUserDataObject(querystring.unescape(postData));
+		var credentialsRight=Validate(userInfo,response);
+		var UserDoesNotExist=CheckForExistence(userInfo.email,response);
+		if(credentialsRight && UserDoesNotExist){
+			delete userInfo['cpassword'];
+			peoplesInfo.push(userInfo);
+			fs.writeFile('PeopleInfo.txt',JSON.stringify(peoplesInfo));
+			renderer(response,ContentType.html,login);
+		}
+	})
+}
+
+
+handler['/signUp.html']=function(request,response){
+	renderer(response,ContentType.html,signUp);
 }
 
 
@@ -93,12 +149,12 @@ handler['/images/logo.png']=function(request,response){
 }
 
 handler['/stylesheets/mystyle.css']=function(request,response){
-	renderer(response,ContentType.css,cssTemplate);
+	renderer(response,ContentType.css,cssForSignUpandLogin);
 }
 
 
 handler['/stylesheets/style.css']=function(request,response){
-	renderer(response,ContentType.css,cssHomeTemplate);
+	renderer(response,ContentType.css,cssAfterLogin);
 }
 
 handler['/favicon.ico']=function(request,response){
