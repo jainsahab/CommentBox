@@ -15,7 +15,7 @@ var logo=fs.readFileSync('./public/images/logo.png');
 var favicon=fs.readFileSync('./public/images/icon2.ico');
 var background=fs.readFileSync('./public/images/bg.jpg');
 var peoplesInfo=fs.readFileSync('PeopleInfo.txt','utf-8') && JSON.parse(fs.readFileSync('PeopleInfo.txt','utf-8')) || [];
-
+var UserNameForSession='';
 var ContentType={html:'text/html',imgJpg:'image/jpeg',css:'image/css',icon:'image/x-icon',imgPng:'image/png'}
 var GetReadableCommentsFromObject=function(commentsArray){
 	return commentsArray.map(function(obj){
@@ -46,7 +46,11 @@ handler['/']=function(request,response){
 
 var credentialsMatch=function(email,password){
 	return peoplesInfo.some(function(obj){
-		return (obj.email == email && obj.password == password);
+		if(obj.email == email && obj.password == password ){
+			UserNameForSession=obj.name;
+			return true;
+		}
+		return false;
 	})
 }
 
@@ -57,7 +61,7 @@ handler['/authentication']=function(request,response){
 		var pswd = querystring.unescape(postData.split('&')[1].split('=')[1]);
 		if(credentialsMatch(email,pswd)){
 			var listComment=GetReadableCommentsFromObject(commentsArray);
-			renderer(response,ContentType.html,htmlFileData.replace(/{COMMENT}/,listComment.join('<br>')))
+			renderer(response,ContentType.html,htmlFileData.replace(/{COMMENT}/,listComment.join('<br>')).replace(/{USERNAME}/,UserNameForSession));
 		}
 		else
 			renderer(response,ContentType.html,'<h1>Authentication Failed</h1>');	
@@ -98,7 +102,7 @@ var CheckForExistence=function(email,response){
 handler['/ToRegisterUser']=function(request,response){
 	request.setEncoding('utf-8');
 	request.on('data',function(postData){
-		var userInfo=GetUserDataObject(querystring.unescape(postData));
+		var userInfo=GetUserDataObject(querystring.unescape(postData).replace(/\+/,' '));
 		var credentialsRight=Validate(userInfo,response);
 		var UserDoesNotExist=CheckForExistence(userInfo.email,response);
 		if(credentialsRight && UserDoesNotExist){
@@ -124,7 +128,8 @@ handler['/clientPage.html']=function(request,response){
 		query.comment=querystring.unescape(data.split('&')[1].split('=')[1]).replace(/\+/g,' ');
 		query.name && query.comment && commentsArray.push(query) && fs.writeFile('comments.txt',JSON.stringify(commentsArray));
 		var listComment=GetReadableCommentsFromObject(commentsArray);		
-		renderer(response,ContentType.html,htmlFileData.replace(/{COMMENT}/,listComment.join('<br>')));	
+		UserNameForSession = query.name;		
+		renderer(response,ContentType.html,htmlFileData.replace(/{COMMENT}/,listComment.join('<br>')).replace(/{USERNAME}/,UserNameForSession));	
 	});
 }
 
@@ -151,6 +156,7 @@ handler['/images/logo.png']=function(request,response){
 handler['/stylesheets/mystyle.css']=function(request,response){
 	renderer(response,ContentType.css,cssForSignUpandLogin);
 }
+
 
 
 handler['/stylesheets/style.css']=function(request,response){
