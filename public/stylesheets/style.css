@@ -1,12 +1,12 @@
 body{
-	background-image:url("../images/bg.jpg");
+	background-image:url("/bg.jpg");
 	font-family: 'Oleo Script', cursive;
 }
 
 .container{
-	width:400px;
-	margin:12px auto;
-	padding:10px 40px;
+	width:500px;
+	margin:100px auto;
+	padding:20px 40px;
 	border:1px;
 	background:rgba(255,255,255,.5);
 	border-radius:10px;
@@ -15,14 +15,16 @@ body{
 }
 .container h1{
 	font-size:40px;
+	text-align:center;
 }
 #form > div {
-	margin:1px 1px;
-	padding:1px 0px;
+	margin:10px 5px;
+	padding:5px 0;
 }
 #form label{
-	font-size: 17px;
-	line-height: 27px;
+	
+	font-size: 20px;
+	line-height: 25px;
 }
 #form input[type="text"],
 #form input[type="password"]{
@@ -58,18 +60,37 @@ body{
 #form button:hover{
 	background:aqua;
 }
-select{
-	font-family: 'Oleo Script', cursive;
-	padding: 5px;
-	border:1px solid rgba(51,51,51,.5);
-	border-radius:10px;
-	border-radius:10px;
-	border-radius:10px;
+
+
+#menu
+{
+    margin:-28.5px;
 }
-#message{width:100%;text-align:center}
-.success {
-	color: green;
+#menu li
+{
+    display:inline;
 }
-.error {
-	color: red;
+#menu li a
+{  
+   font-family:Arial;
+   font-size:12px;
+   text-decoration: none;
+   float:center;
+   padding:12px;
+   background-color:#330099;
+   color:#ffffff;
+   border-bottom:1px;
+   border-bottom-color:#000000;
+   border-bottom-style:solid;
+   margin:-8px;
+
+}
+#menu li a:hover
+{
+   background-color:#3399FF;
+   padding-bottom:12px;
+   border-bottom:2px;
+   border-bottom-color:#000000;
+   border-bottom-style:solid;
+   margin:-8px;
 }
