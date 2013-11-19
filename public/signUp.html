@@ -2,6 +2,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Sign Up</title>
+	<script type="text/javascript" src='/validation'>
+	</script>
 	<link rel="stylesheet" href="./stylesheets/style.css" />
 	<h1>
 		<center>
@@ -19,16 +21,18 @@
 		<form id="form" name="form" method="post" action='/ToRegisterUser'>
 			<div>
 				<label>Name:</label>
-				<input type="text" name="name" id="name" placeholder="name"/>
+				<input type="text" name="username" id="name" placeholder="name" required/>
 				<label>Email ID:</label>
-				<input type="text" name="email" id="email" placeholder="Email-ID"/>
+				<input type="text" name="emailid" id="email" placeholder="example@commentbox.com" required/>
 				<label>Password:</label>
-				<input type="password" name="password" id="password" placeholder="Password"/>
+				<input type="password" name="pswd" id="password" placeholder="Password" required/>
 				<label>Re-Enter Password:</label>
-				<input type="password" name="cpassword" id="cpassword" placeholder="Re-Enter Password"/>
+				<input type="password" name="cpswd" id="cpassword" placeholder="Re-Enter Password" required/>
+				<label>Recovery Email ID:</label>
+				<input type="text" name="Remail" id="Remail" placeholder="example@whatever.com" required/>
 				 <br/>
 				 <br/>
-				<button type="submit" id="login">Sign Up</button>
+				<button type="submit" onclick='return Validate()' id="login">Sign Up</button>
 			</div>
 		</form>
 	</div>

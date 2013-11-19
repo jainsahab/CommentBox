@@ -1,6 +1,7 @@
-var handler={};
+var handler={};	
 var fs=require('fs');
 var url=require('url');
+var mailer=require('nodemailer');
  var querystring = require("querystring"); 
 var commentsArray=fs.readFileSync('comments.txt','utf-8') && JSON.parse(fs.readFileSync('comments.txt',"utf-8")) || [];
 var htmlFileData=fs.readFileSync('./public/clientPage.html','utf-8');
@@ -8,6 +9,7 @@ var home=fs.readFileSync('./public/Home.html','utf-8');
 var login=fs.readFileSync('./public/Login.html','utf-8');
 var signUp=fs.readFileSync('./public/signUp.html','utf-8');
 var contact=fs.readFileSync('./public/contact.html','utf-8');
+var forgetPassword=fs.readFileSync('./public/ForgetPassword.html')
 var cssForSignUpandLogin=fs.readFileSync('./public/stylesheets/mystyle.css');
 var cssAfterLogin=fs.readFileSync('./public/stylesheets/style.css');
 var step=fs.readFileSync('./Photos/step.jpg');
@@ -23,8 +25,9 @@ var img4=fs.readFileSync('./public/images/img4.jpg');
 var favicon=fs.readFileSync('./public/images/icon2.ico');
 var background=fs.readFileSync('./public/images/bg.jpg');
 var peoplesInfo=fs.readFileSync('PeopleInfo.txt','utf-8') && JSON.parse(fs.readFileSync('PeopleInfo.txt','utf-8')) || [];
+var validation=fs.readFileSync('./public/javascript/validation.js','utf-8');
 var UserNameForSession='';
-var ContentType={html:'text/html',imgJpg:'image/jpeg',css:'image/css',icon:'image/x-icon',imgPng:'image/png'}
+var ContentType={html:'text/html',imgJpg:'image/jpeg',css:'image/css',icon:'image/x-icon',imgPng:'image/png',javascript:'text/javascript'}
 var GetReadableCommentsFromObject=function(commentsArray){
 	return commentsArray.map(function(obj){
 		return '<b>' + obj.name+' </b>: ' +obj.comment;
@@ -85,35 +88,6 @@ var GetUserDataObject=function(postData){
 	return obj;
 }
 
-var Validate=function(InfoObj,response){
-	var emailPattern=/^[_A-Za-z0-9]+@commentbox.com/;
-	var namePattern=/^[0-9]/;
-	if(InfoObj.name==''){
-		renderer(response,ContentType.html,'<h1>You can\'t register without Your name.</h1>');
-		return false;
-	}
-	if(InfoObj.name.match(namePattern)){
-		renderer(response,ContentType.html,'<h1>Name can\'t be start with Number.</h1>');
-		return false;
-	}
-	if(!InfoObj.email.match(emailPattern)){
-		renderer(response,ContentType.html,'<h1>Invalid Mail</h1>');
-		return false;
-	}
-	if(InfoObj.password=='' && InfoObj.cpassword==''){
-		renderer(response,ContentType.html,'<h1>Password field can\'t be empty.</h1>');
-		return false;	
-	}
-	if(InfoObj.password != InfoObj.cpassword){
-		renderer(response,ContentType.html,'<h1>Password doesn\'t match</h1>');
-		return false;	
-	}
-	if(InfoObj.password.length <= 8){
-		renderer(response,ContentType.html,'<h1>Password should be more than 8 characters. </h1>');
-		return false;	
-	}
-	return true;
-}
 
 var CheckForExistence=function(email,response){
 	var UserNotExist= peoplesInfo.every(function(obj){
@@ -129,15 +103,56 @@ handler['/ToRegisterUser']=function(request,response){
 	request.setEncoding('utf-8');
 	request.on('data',function(postData){
 		var userInfo=GetUserDataObject(querystring.unescape(postData).replace(/\+/,' '));
-		var credentialsRight=Validate(userInfo,response);
 		var UserDoesNotExist=CheckForExistence(userInfo.email,response);
-		if(credentialsRight && UserDoesNotExist){
+		if(UserDoesNotExist){
 			delete userInfo['cpassword'];
 			peoplesInfo.push(userInfo);
 			fs.writeFile('PeopleInfo.txt',JSON.stringify(peoplesInfo));
 			renderer(response,ContentType.html,login);
 		}
 	})
+}
+
+var getPassword=function(Email){
+	return peoplesInfo.filter(function(obj){
+		return obj.Remail==Email;
+	})[0].password;
+}
+
+var sendMail=function(UserPassword,forgottenPasswordEmail){
+	var smtpTransport = mailer.createTransport("SMTP",{
+		    service: "Gmail",
+		    auth: {
+		        user: "getitback911@gmail.com",
+		        pass: "ggeetitback"
+		    }
+		});
+		var mailOptions = {
+		    to: forgottenPasswordEmail, 
+		    subject: "Account Recovery Password", 
+		    text: "Your Password is "+UserPassword+".", 
+		    html: "<b>Your Password is "+UserPassword+".</b>"
+			}
+	smtpTransport.sendMail(mailOptions, function(error, response){
+	    if(error){
+	        console.log(error);
+	    }else{
+	        console.log("Message sent: " + response.message);
+	    }
+	});
+}
+
+handler['/SendPassword']=function(request,response){
+	request.setEncoding('utf-8');
+	request.on('data',function(postData){
+		var forgottenPasswordEmail=querystring.unescape(postData).split('=')[1];
+		var UserPassword=getPassword(forgottenPasswordEmail)
+		sendMail(UserPassword,forgottenPasswordEmail);
+	});	
+}
+
+handler['/forgetpassword.html']=function(request,response){
+	renderer(response,ContentType.html,forgetPassword);
 }
 
 handler['/contact.html']=function(request,response){
@@ -223,4 +238,7 @@ handler['/favicon.ico']=function(request,response){
 	renderer(response,ContentType.icon,favicon);
 }
 
+handler['/validation']=function(request,response){
+	renderer(response,ContentType.javascript,validation);
+}
 exports.handler=handler;
