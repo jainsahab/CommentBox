@@ -16,3 +16,27 @@ div {
   font-size: 12pt;
   font-family:Comic Sans MS
 } 
+
+
+#header {
+  margin-bottom: 20px;
+}
+
+#photo {
+  float: left;
+  width: 500px;
+}
+
+#comment-box {
+  width: 500px;
+}
+
+#all-comments {
+  margin-left: 500px;
+  max-width: 600px;
+  overflow: hidden;
+}
+
+#comments {
+  width: 400px;
+}

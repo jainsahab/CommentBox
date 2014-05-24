@@ -3,7 +3,7 @@ var fs=require('fs');
 var url=require('url');
 var mailer=require('nodemailer');
  var querystring = require("querystring"); 
-var commentsArray=fs.readFileSync('comments.txt','utf-8') && JSON.parse(fs.readFileSync('comments.txt',"utf-8")) || [];
+var commentsArray=fs.existsSync('comments.txt') ? JSON.parse(fs.readFileSync('comments.txt',"utf-8")) : [];
 var clientPage=fs.readFileSync('./public/clientPage.html','utf-8');
 var home=fs.readFileSync('./public/Home.html','utf-8');
 var login=fs.readFileSync('./public/Login.html','utf-8');
@@ -23,13 +23,13 @@ var img3=fs.readFileSync('./public/images/img3.png');
 var img4=fs.readFileSync('./public/images/img4.jpg');
 var favicon=fs.readFileSync('./public/images/icon2.ico');
 var background=fs.readFileSync('./public/images/bg.jpg');
-var peoplesInfo=fs.readFileSync('PeopleInfo.txt','utf-8') && JSON.parse(fs.readFileSync('PeopleInfo.txt','utf-8')) || [];
+var peoplesInfo= fs.existsSync('PeopleInfo.txt') ? JSON.parse(fs.readFileSync('PeopleInfo.txt','utf-8')) : [];
 var validation=fs.readFileSync('./public/javascript/validation.js','utf-8');
 var UserNameForSession='';
 var ContentType={html:'text/html',imgJpg:'image/jpeg',css:'image/css',icon:'image/x-icon',imgPng:'image/png',javascript:'text/javascript'}
 var GetReadableCommentsFromObject=function(commentsArray){
 	return commentsArray.map(function(obj){
-		return '<b>' + obj.name+' </b>: ' +obj.comment;
+		return '<p><b>' + obj.name+' </b>:<span class="comment-text">' +obj.comment + '</span></p>';
 	});
 }
 
@@ -62,7 +62,7 @@ handler['/authentication']=function(request,response){
 		var pswd = querystring.unescape(postData.split('&')[1].split('=')[1]);
 		if(credentialsMatch(email,pswd)){
 			var listComment=GetReadableCommentsFromObject(commentsArray);
-			renderer(response,ContentType.html,clientPage.replace(/{COMMENT}/,listComment.join('<br>')).replace(/{USERNAME}/,UserNameForSession));
+			renderer(response,ContentType.html,clientPage.replace(/{COMMENT}/,listComment.join('<br>')).replace(/{USERNAME}/g,UserNameForSession));
 		}
 		else
 			renderer(response,ContentType.html,'<h1>Authentication Failed</h1>');	
@@ -168,7 +168,7 @@ handler['/clientPage.html']=function(request,response){
 		query.name && query.comment && commentsArray.push(query) && fs.writeFile('comments.txt',JSON.stringify(commentsArray));
 		var listComment=GetReadableCommentsFromObject(commentsArray);		
 		UserNameForSession = query.name;		
-		renderer(response,ContentType.html,clientPage.replace(/{COMMENT}/,listComment.join('<br>')).replace(/{USERNAME}/,UserNameForSession));	
+		renderer(response,ContentType.html,clientPage.replace(/{COMMENT}/,listComment).replace(/{USERNAME}/,UserNameForSession));	
 	});
 }
 

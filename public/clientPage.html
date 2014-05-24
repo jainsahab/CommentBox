@@ -5,27 +5,25 @@
   </head>
 
   <body>
-    <div class="msg" style="position:absolute; left:585px; top:29px; width:780px;height:695px;">
-      <h1>Comments:</h1><hr/>
-        {COMMENT}
-    </div>
-    <div class="photo" style="height:200px; width:150px; float:left;">
-      <p>
-        <img src="/banner2.png" width="403" height="57"/>
-      </p>
-      <p>
+    <div id="header"><img src="/banner2.png" width="403" height="57"/></div>
+    <div>
+      <div id="photo">
         <img border="0" src="./images/step.jpg" alt="ThoughtWorks" width="436" height="316">
-      </p>
-      <br/>
-      <form action='/clientPage.html' method='post'>
-        <b>Name:</b>
-        <input type="text" name="name" value='{USERNAME}' readonly/><br>
-        <b>Comment:</b>
-        <textarea name="comment" id="comments" ></textarea><br>
-        <center>
-        <input type="submit" value="Post it" />
-        </center>
-      </form>
+        <div id="comment-box">
+          <b>{USERNAME}</b>
+          <form action='/clientPage.html' method='post'>
+            <input name="name" value="{USERNAME}" type="hidden" />
+            <textarea name="comment" id="comments" placeholder="your comment here ..." maxlength="160" rows="6"></textarea>
+            <center>
+            <input type="submit" value="Post it" />
+            </center>
+          </form>
+        </div>
+      </div>
+      <div id="all-comments">
+        <h1>Comments:</h1><hr/>
+        {COMMENT}
+      </div>
     </div>
   </body>
 </html>
